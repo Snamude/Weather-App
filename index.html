@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22256%22 height=%22256%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2250%22 fill=%22%230058ff%22></rect><path fill=%22%23fff%22 d=%22M72.15 21.33L72.15 21.33Q74.49 22.50 74.90 25.02Q75.30 27.54 73.59 29.61L73.59 29.61Q72.42 31.23 70.58 31.41Q68.73 31.59 66.84 30.69L66.84 30.69Q64.68 29.70 62.30 29.16Q59.91 28.62 57.30 28.62L57.30 28.62Q52.44 28.62 48.62 30.15Q44.79 31.68 42.09 34.52Q39.39 37.35 38.00 41.22Q36.60 45.09 36.60 49.77L36.60 49.77Q36.60 55.26 38.18 59.31Q39.75 63.36 42.54 66.06Q45.33 68.76 49.11 70.07Q52.89 71.37 57.30 71.37L57.30 71.37Q59.73 71.37 62.16 70.92Q64.59 70.47 66.84 69.30L66.84 69.30Q68.73 68.40 70.58 68.67Q72.42 68.94 73.68 70.56L73.68 70.56Q75.48 72.81 74.99 75.20Q74.49 77.58 72.24 78.66L72.24 78.66Q69.90 79.83 67.43 80.60Q64.95 81.36 62.43 81.77Q59.91 82.17 57.30 82.17L57.30 82.17Q50.82 82.17 45.02 80.10Q39.21 78.03 34.67 73.98Q30.12 69.93 27.51 63.86Q24.90 57.78 24.90 49.77L24.90 49.77Q24.90 42.84 27.29 36.99Q29.67 31.14 34.04 26.87Q38.40 22.59 44.34 20.21Q50.28 17.82 57.30 17.82L57.30 17.82Q61.26 17.82 65.04 18.72Q68.82 19.62 72.15 21.33Z%22></path></svg>" />
+<meta charset="UTF-8">
+<meta http-equiv=“Pragma” content=”no-cache”>
+<meta http-equiv=“Expires” content=”-1″>
+<meta http-equiv=“CACHE-CONTROL” content=”NO-CACHE”>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Link to Tailwind CSS CDN for easy styling -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- CSS Stylesheets -->
+<link rel="stylesheet" href="css/master.css">
+<title>API Project</title>
+</head>
+
+<body>    
+<center><h1 class="heading">EurOrbit</h1></center>
+<center><h2 class="subheading">European Weather Forecast</h2></center>
+<center><h4><p class="copyright-text">Powered by <a href="https://www.7timer.info/doc.php?lang=en">7Timer!</a></p></h4></center>
+
+<!--European Cities-->
+
+<br>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>European Weather Forecast (7Timer!)</title>
+    <!-- Link to Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a clean, modern look */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: skyblue; 
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+    <div class="bg-gradient-to-br from-blue-400 to-indigo-600 p-8 rounded-xl shadow-2xl max-w-7xl w-full text-white">
+        
+        <!-- City Selection Dropdown -->
+        <div class="mb-8 flex justify-center">
+            <label for="city-select" class="sr-only">Choose a city:</label>
+            <select
+                id="city-select"
+                class="block w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-400 focus:border-purple-400 sm:text-lg appearance-none cursor-pointer
+                       transition duration-200 ease-in-out hover:border-purple-300 bg-white text-gray-900 font-semibold"
+            >
+                <!-- Options will be populated by JavaScript -->
+            </select>
+        </div>
+
+        <!-- Current City Name Display -->
+        <h2 id="current-city-name" class="text-3xl font-bold mb-8 text-center text-white drop-shadow-md">Select a City</h2>
+
+        <!-- Loading/Error Message -->
+        <p id="message-area" class="text-center text-red-300 mb-4 hidden">Error: Could not load weather data.</p>
+        <div id="loading-spinner" class="text-center mb-4 hidden">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+            <p class="mt-2 text-white">Loading forecast...</p>
+        </div>
+
+        <!-- Weather Forecast Grid Container -->
+        <div id="forecast-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6">
+            <!-- Forecast cards will be injected here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // === Configuration ===
+        // 7Timer! API endpoint for civillight daily forecast (no API key needed for this product)
+        // Changed to HTTPS to prevent mixed content errors
+        const SEVEN_TIMER_API_URL = 'https://www.7timer.info/bin/api.pl?product=civillight&output=json';
+
+        // European cities with their coordinates
+        const EUROPEAN_CITIES = {
+            'Amsterdam, Netherlands': { lat: 52.367, lon: 4.904 },
+            'Ankara, Turkey': { lat: 39.933, lon : 32.859 },
+            'RoÅstorp, Sweden': { lat: 56.134, lon : 12.945 },
+            'Athens, Greece': { lat: 37.983, lon: 23.7270 },
+            'Belfast, Northern Ireland': { lat : 54.597 , lon : -5.930 },
+            'Barcelona, Spain': { lat : 41.387, lon: 2.168 },
+            'Berlin, Germany': { lat: 52.520, lon: 13.405 },
+            'Bern, Switzerland': { lat: 46.948, lon: 7.447 },
+            'Bilbao, Spain': { lat: 43.263, lon: -2.935 },
+            'Brussels, Belgium': { lat: 50.847, lon: 4.357 },
+            'Bucharest, Romania': { lat: 47.497, lon: 19.040 },
+            'Budapest, Hungary': { lat: 59.329, lon: 18.068 },
+            'Cardiff, Wales': { lat: 51.483, lon: -3.168 },
+            'Cologne, Germany': { lat: 50.937, lon: 6.960 },
+            'Copenhagen, Denmark': { lat: 55.676, lon: 12.568 },
+            'Cork, Ireland': { lat: 51.898, lon: -8.475 },
+            'Dublin, Ireland': { lat: 53.349, lon: -6.260 },
+            'Edinburgh, Scotland': { lat: 55.953, lon: -3.188 },
+            'Florence, Italy': { lat: 43.7696, lon: 11.255 },
+            'Frankfurt, Germany': { lat: 50.110, lon: 8.682 },
+            'French Riviera, France': { lat: 43.254, lon: 6.637 },
+            'Funchal, Portugal': { lat: 32.650, lon: -16.908 },
+            'Gibraltar': { lat: 36.140, lon: -5.353 },
+            'Gothenburg, Sweden': { lat: 57.708, lon: 11.974 },
+            'Hamburg, Germany': { lat: 53.548, lon: 9.987 },
+            'Helsinki, Finland': { lat: 60.169, lon: 24.938 },
+            'Ibiza, Spain': { lat: 39.020, lon: 1.482 },
+            'Kyiv, Ukraine': { lat: 50.450, lon: 30.523 },
+            'Lillehammer, Norway': { lat: 61.115, lon: 10.466 },
+            'Lisbon, Portugal': { lat: 38.722, lon: -9.139 },
+            'London, England': { lat: 51.507, lon: -0.127 },
+            'Madrid, Spain': { lat: 40.416, lon: -3.703 },
+            'Mallorca, Spain': { lat: 39.695, lon: 3.017 },
+            'Manchester, England': { lat: 53.480, lon: -2.242 },
+            'Marseille, France': { lat: 43.296, lon: 5.369 },
+            'Maspalomas, Spain': { lat: 27.760, lon: -15.586 },
+            'Milan, Italy': { lat: 45.464, lon: 9.190 },
+            'Munich, Germany': { lat: 48.135, lon: 11.582 },
+            'Naples, Italy': { lat: 40.851, lon: 14.268 },
+            'Oñati, Spain': { lat: 43.034, lon: -2.417 },
+            'Oslo, Norway': { lat: 59.913, lon: 10.752 },
+            'Paris, France': { lat: 48.856, lon: 2.352 },
+            'Prague, Czech Republic': { lat: 50.075, lon: 14.437 },
+            'Reykjavík, Iceland': { lat: 64.146, lon: -21.942 },
+            'Riga, Latvia': { lat: 56.879, lon: 24.603 },
+            'Rome, Italy': { lat: 41.902, lon: 12.496 },
+            'Santa Cruz das Flores, Portugal': { lat: 39.453, lon: -31.127 },
+            'Santa Cruz de Tenerife, Spain': { lat: 28.463, lon: -16.251 },
+            'Skye, Scotland': { lat: 57.273, lon: -6.215 },
+            'Sofia, Bulgaria': { lat: 42.697, lon: 23.321 },
+            'Stockholm, Sweden': { lat: 59.329, lon: 18.068 },
+            'Tallinn, Estonia': { lat: 59.437, lon: 24.753 },
+            'Vienna, Austria': { lat: 48.208, lon: 16.373 },
+            'Warsaw, Poland': { lat: 52.229, lon: 21.012 },
+            'York, England': { lat: 53.961, lon: -1.070 },
+            'Zurich, Switzerland': { lat: 47.376, lon: 8.541 }
+        };
+
+        // === DOM Elements ===
+        const citySelect = document.getElementById('city-select');
+        const currentCityNameDisplay = document.getElementById('current-city-name');
+        const forecastGrid = document.getElementById('forecast-grid');
+        const messageArea = document.getElementById('message-area');
+        const loadingSpinner = document.getElementById('loading-spinner');
+
+        // === Helper Functions ===
+
+        // Function to get weather icon based on 7Timer! condition string
+        function getWeatherIconSvg(condition) {
+            // Mapping 7Timer! conditions to our SVG icons
+            switch (condition.toLowerCase()) {
+                case 'clear':
+                case 'clearday': // Sometimes 7timer gives clearday/clearnight
+                case 'clearnight':
+                    return `<img src="images/clear.png">`;
+                case 'Partly Cloudy':
+                    return `<img src="images/Partly Cloudy.png">`;
+                case 'cloudy':
+                    return `<img src="images/cloudy.png">`;
+                case 'lightrain':
+                return `<img src="images/lightrain.png">`;
+                case 'rain':
+                return `<img src="images/rain.png">`;
+                case 'Isolated shower': // Isolated shower
+                    return `<img src="images/ishower.png">`;
+                case 'ts': // Thunderstorm
+                return `<img src="images/tstorm.png">`;
+                case 'tsrain': // Thunderstorm with rain
+                    return `<img src="images/tsrain.png">`;
+                case 'hail':
+                    return `<img src="images/tsrain.png">`;
+                case 'lightsnow':
+                return `<img src="images/lightsnow.png">`;
+                case 'snow':
+                return `<img src="images/snow.png">`;
+                case 'rainsnow':
+                    return `<img src="images/rainsnow.png">`; // Snowflake/snow icon
+                case 'ishower':
+                    return `<img src="images/ishower.png">`;
+                case 'mcloudy':
+                    return `<img src="images/mcloudy.png">`;    
+                default:
+                    // Default general weather icon (e.g., placeholder or general weather)
+                    return `<svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.69a1.5 1.5 0 0 0-2.12 0L12 16.06l-2.19-2.19a1.5 1.5 0 0 0-2.12 0L3 16.06ZM15.75 9.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+                            </svg>`;
+            }
+        }
+
+        // Function to display messages (errors, warnings)
+        function showMessage(msg, isError = true) {
+            messageArea.textContent = msg;
+            messageArea.classList.remove('hidden');
+            if (isError) {
+                messageArea.classList.remove('text-blue-300');
+                messageArea.classList.add('text-red-300');
+            } else {
+                messageArea.classList.remove('text-red-300');
+                messageArea.classList.add('text-blue-300');
+            }
+        }
+
+        // Function to hide messages
+        function hideMessage() {
+            messageArea.classList.add('hidden');
+        }
+
+        // Function to show loading spinner
+        function showLoading() {
+            loadingSpinner.classList.remove('hidden');
+            forecastGrid.innerHTML = ''; // Clear existing cards
+            hideMessage();
+        }
+
+        // Function to hide loading spinner
+        function hideLoading() {
+            loadingSpinner.classList.add('hidden');
+        }
+
+        // === Core Logic ===
+
+        // Function to fetch weather data from 7Timer! API
+        async function fetchWeather(cityLat, cityLon, cityName) {
+            showLoading(); // Show loading spinner
+            currentCityNameDisplay.textContent = `Loading forecast for ${cityName}...`; // Update city name display
+
+            // Build API URL for 7Timer! civillight product
+            const apiUrl = `${SEVEN_TIMER_API_URL}&lon=${cityLon}&lat=${cityLat}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+                }
+                const data = await response.json();
+                renderForecast(cityName, data.dataseries);
+            } catch (error) {
+                console.error("Error fetching weather data:", error);
+                // --- MODIFICATION START ---
+                // More specific error message for network issues
+                showMessage(`Failed to load weather for ${cityName}. This might be due to a network issue, or the 7Timer! API being temporarily unavailable or blocking requests from this origin. Please try again later.`, true);
+                // --- MODIFICATION END ---
+                currentCityNameDisplay.textContent = `Forecast for ${cityName} (Error)`;
+                forecastGrid.innerHTML = ''; // Clear forecast cards on error
+            } finally {
+                hideLoading(); // Hide loading spinner regardless of success or failure
+            }
+        }
+
+        // Function to render the forecast cards on the grid
+        function renderForecast(cityName, dailyForecasts) {
+            currentCityNameDisplay.textContent = `Forecast for ${cityName}`;
+            forecastGrid.innerHTML = ''; // Clear previous forecasts
+            hideMessage(); // Hide any previous error messages
+
+            if (!dailyForecasts || dailyForecasts.length === 0) {
+                showMessage(`No forecast data available for ${cityName}.`, false);
+                return;
+            }
+
+            // Take the first 7 days from the dataseries (7Timer! provides more, but we only need 7)
+            const sevenDayForecast = dailyForecasts.slice(0, 7);
+
+            sevenDayForecast.forEach((dayData, index) => {
+                // 7Timer! `date` is YYYYMMDD format. Convert to a Date object.
+                const year = String(dayData.date).substring(0, 4);
+                const month = String(dayData.date).substring(4, 6);
+                const day = String(dayData.date).substring(6, 8);
+                const forecastDate = new Date(`${year}-${month}-${day}`);
+
+                // Check if it's "Today" using local date comparison
+                const todayFormatted = new Date().toDateString();
+                const forecastDateFormatted = forecastDate.toDateString();
+                const dayOfWeek = (forecastDateFormatted === todayFormatted) ? 'Today' : forecastDate.toLocaleDateString('en-US', { weekday: 'short' });
+                const monthDay = forecastDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+                const highTemp = dayData.temp2m.max; // 7Timer! provides Celsius directly
+                const lowTemp = dayData.temp2m.min;   // 7Timer! provides Celsius directly
+                const conditionText = dayData.weather; // e.g., "clear", "pcloudy", "rain"
+
+                const cardHtml = `
+                    <div class="bg-white/20 backdrop-blur-sm p-4 rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105 hover:bg-white/30 border-2 border-transparent hover:border-white">
+                        <h3 class="text-xl font-bold mb-2">${dayOfWeek}</h3>
+                        <p class="text-sm text-gray-100 mb-4">${monthDay}</p>
+                        <div class="mb-4">
+                            ${getWeatherIconSvg(conditionText)}
+                        </div>
+                        <p class="text-lg font-semibold capitalize">${conditionText.replace(/([A-Z])/g, ' $1').trim()}</p>
+                        <p class="text-4xl font-extrabold my-2">${highTemp}°C</p>
+                        <p class="text-base text-gray-200">Low: ${lowTemp}°C</p>
+                    </div>
+                `;
+                forecastGrid.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        // === Event Listeners and Initial Load ===
+
+        // Populate the city dropdown
+        for (const city in EUROPEAN_CITIES) {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+        }
+
+        // Set initial forecast to Amsterdam (or first city in the list)
+        const defaultCityName = Object.keys(EUROPEAN_CITIES)[0];
+        if (defaultCityName) {
+            citySelect.value = defaultCityName;
+            const { lat, lon } = EUROPEAN_CITIES[defaultCityName];
+            fetchWeather(lat, lon, defaultCityName);
+        } else {
+            showMessage("No cities configured.", true);
+            currentCityNameDisplay.textContent = "No City Selected";
+            hideLoading();
+        }
+
+        // Add event listener for dropdown changes
+        citySelect.addEventListener('change', (event) => {
+            const selectedCityName = event.target.value;
+            const { lat, lon } = EUROPEAN_CITIES[selectedCityName];
+            fetchWeather(lat, lon, selectedCityName);
+        });
+    </script>
+    <br>
+    
+        <center><p class="copyright-text">© Copyright 2025 EurOrbit </p></center>
+   
+</body>
+</html>
+
+<!-- Our codes -->
+<script src="js/main.js"></script>
