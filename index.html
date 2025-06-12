@@ -11,8 +11,8 @@
 <!-- Link to Tailwind CSS CDN for easy styling -->
 <script src="https://cdn.tailwindcss.com"></script>
 <!-- CSS Stylesheets -->
-<link rel="stylesheet" href="css/master.css">
-<title>API Project</title>
+<link rel="stylesheet" href="css/master.css"> 
+<title>EurOrbit Weather Forecast (7Timer!)</title>
 </head>
 
 <body>    
@@ -29,7 +29,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>European Weather Forecast (7Timer!)</title>
+    
     <!-- Link to Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -145,48 +145,51 @@
         const loadingSpinner = document.getElementById('loading-spinner');
 
         // === Helper Functions ===
-
-        // Function to get weather icon based on 7Timer! condition string
-        function getWeatherIconSvg(condition) {
-            // Mapping 7Timer! conditions to our SVG icons
-            switch (condition.toLowerCase()) {
+        
+      // Function to get weather icon path and readable text based on 7Timer! condition string
+function getWeatherIconSvg(condition) {
+    
+    // Convert condition to lowercase for robust matching
+        switch (condition.toLowerCase()) {
                 case 'clear':
                 case 'clearday': // Sometimes 7timer gives clearday/clearnight
                 case 'clearnight':
                     return `<img src="images/clear.png">`;
-                case 'Partly Cloudy':
-                    return `<img src="images/Partly Cloudy.png">`;
+                case 'pcloudy':
+                    return `<img src="images/pcloudy.png">`;
                 case 'cloudy':
                     return `<img src="images/cloudy.png">`;
                 case 'lightrain':
-                return `<img src="images/lightrain.png">`;
+                    return `<img src="images/lightrain.png">`;
                 case 'rain':
-                return `<img src="images/rain.png">`;
+                    return `<img src="images/rain.png">`;
                 case 'Isolated shower': // Isolated shower
                     return `<img src="images/ishower.png">`;
                 case 'ts': // Thunderstorm
-                return `<img src="images/tstorm.png">`;
+                    return `<img src="images/tstorm.png">`;
                 case 'tsrain': // Thunderstorm with rain
                     return `<img src="images/tsrain.png">`;
                 case 'hail':
                     return `<img src="images/tsrain.png">`;
                 case 'lightsnow':
-                return `<img src="images/lightsnow.png">`;
+                    return `<img src="images/lightsnow.png">`;
                 case 'snow':
-                return `<img src="images/snow.png">`;
+                    return `<img src="images/snow.png">`;
                 case 'rainsnow':
                     return `<img src="images/rainsnow.png">`; // Snowflake/snow icon
                 case 'ishower':
                     return `<img src="images/ishower.png">`;
                 case 'mcloudy':
-                    return `<img src="images/mcloudy.png">`;    
+                    return `<img src="images/mcloudy.png">`;   
                 default:
                     // Default general weather icon (e.g., placeholder or general weather)
                     return `<svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
                                 <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.69a1.5 1.5 0 0 0-2.12 0L12 16.06l-2.19-2.19a1.5 1.5 0 0 0-2.12 0L3 16.06ZM15.75 9.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
                             </svg>`;
-            }
-        }
+    } 
+    
+
+}
 
         // Function to display messages (errors, warnings)
         function showMessage(msg, isError = true) {
@@ -239,7 +242,7 @@
                 console.error("Error fetching weather data:", error);
                 // --- MODIFICATION START ---
                 // More specific error message for network issues
-                showMessage(`Failed to load weather for ${cityName}. This might be due to a network issue, or the 7Timer! API being temporarily unavailable or blocking requests from this origin. Please try again later.`, true);
+                showMessage(`Failed to load weather for ${cityName}. This might be due to a network issue or the 7Timer! API being temporarily unavailable. Please try again later.`, true);
                 // --- MODIFICATION END ---
                 currentCityNameDisplay.textContent = `Forecast for ${cityName} (Error)`;
                 forecastGrid.innerHTML = ''; // Clear forecast cards on error
@@ -277,7 +280,7 @@
 
                 const highTemp = dayData.temp2m.max; // 7Timer! provides Celsius directly
                 const lowTemp = dayData.temp2m.min;   // 7Timer! provides Celsius directly
-                const conditionText = dayData.weather; // e.g., "clear", "pcloudy", "rain"
+                const conditionText = dayData.weather; // e.g., "Clear", "Partly Cloudy", "Rain"
 
                 const cardHtml = `
                     <div class="bg-white/20 backdrop-blur-sm p-4 rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105 hover:bg-white/30 border-2 border-transparent hover:border-white">
