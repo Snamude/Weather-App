@@ -52,18 +52,19 @@
         
         <!-- City Selection Dropdown -->
         <div class="mb-8 flex justify-center">
-            <label for="city-select" class="sr-only">Choose a city:</label>
+ 
             <select
                 id="city-select"
                 class="block w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-400 focus:border-purple-400 sm:text-lg appearance-none cursor-pointer
                        transition duration-200 ease-in-out hover:border-purple-300 bg-white text-gray-900 font-semibold"
-            >
+            > <option value="">-- Select a City --</option>
                 <!-- Options will be populated by JavaScript -->
             </select>
         </div>
 
         <!-- Current City Name Display -->
-        <h2 id="current-city-name" class="text-3xl font-bold mb-8 text-center text-white drop-shadow-md">Select a City</h2>
+       
+<h2 id="current-city-name" class="text-3xl font-bold mb-8 text-center text-white drop-shadow-md">Select a City</h2>
 
         <!-- Loading/Error Message -->
         <p id="message-area" class="text-center text-red-300 mb-4 hidden">Error: Could not load weather data.</p>
@@ -152,10 +153,10 @@
         const loadingSpinner = document.getElementById('loading-spinner');
 
         // === Helper Functions ===
+          
         
-      // Function to get weather icon path and readable text based on 7Timer! condition string
- // Function to get weather icon path and readable text based on 7Timer! condition string
-// This function now returns an object containing both the imagePath and the readableCondition string.
+    // Function to get weather icon path and readable text based on 7Timer! condition string
+    // This function now returns an object containing both the imagePath and the readableCondition string.
 function getWeatherIconAndText(condition) {
     let imagePath = '';
     let readableCondition = '';
@@ -271,7 +272,7 @@ function getWeatherIconAndText(condition) {
         // Function to fetch weather data from 7Timer! API
         async function fetchWeather(cityLat, cityLon, cityName) {
             showLoading(); // Show loading spinner
-            currentCityNameDisplay.textContent = `Loading forecast for ${cityName}...`; // Update city name display
+            currentCityNameDisplay.textContent = `Loading Forecast for ${cityName}...`; // Update city name display
 
             // Build API URL for 7Timer! civillight product
             const apiUrl = `${SEVEN_TIMER_API_URL}&lon=${cityLon}&lat=${cityLat}`;
@@ -289,7 +290,7 @@ function getWeatherIconAndText(condition) {
                 // More specific error message for network issues
                 showMessage(`Failed to load weather for ${cityName}. This might be due to a network issue or the 7Timer! API being temporarily unavailable. Please try again later.`, true);
                 // --- MODIFICATION END ---
-                currentCityNameDisplay.textContent = `Forecast for ${cityName} (Error)`;
+                currentCityNameDisplay.textContent = `Forecast for ${cityName} (Error)`; 
                 forecastGrid.innerHTML = ''; // Clear forecast cards on error
             } finally {
                 hideLoading(); // Hide loading spinner regardless of success or failure
@@ -381,6 +382,5 @@ function getWeatherIconAndText(condition) {
  
 </body>
 </html>
+ 
 
-<!-- Our codes -->
-<script src="js/main.js"></script>
