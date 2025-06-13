@@ -163,11 +163,10 @@ function getWeatherIconAndText(condition) {
 
     // Convert condition to lowercase for robust matching from the API
     switch (condition.toLowerCase()) {
-        case 'clear':
-        case 'clearday': // Sometimes 7timer gives clearday/clearnight
-        case 'clearnight':
-            imagePath = 'images/clear.png';
-            readableCondition = 'Clear';
+        
+        case 'clear':  
+            imagePath = 'images/clear.png'; 
+            readableCondition = 'Clear'; // Sets the readable text for 'clear'
             break; // Ensures the switch exits after a match
         case 'pcloudy':
             imagePath = 'images/pcloudy.png';
@@ -185,7 +184,7 @@ function getWeatherIconAndText(condition) {
             imagePath = 'images/rain.png';
             readableCondition = 'Rain';
             break;
-        case 'isolated shower': // This might be a literal string from the API
+        case 'isolated shower': 
         case 'ishower': // Common 7Timer! abbreviation for isolated shower
             imagePath = 'images/ishower.png';
             readableCondition = 'Isolated Shower';
