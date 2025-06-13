@@ -18,7 +18,14 @@
 <body>    
 <center><h1 class="heading">EurOrbit</h1></center>
 <center><h2 class="subheading">European Weather Forecast</h2></center>
-<center><h4><p class="copyright-text">Powered by <a href="https://www.7timer.info/doc.php?lang=en">7Timer!</a></p></h4></center>
+<center><h4><p class="copyright-text">Powered by <a href="https://www.7timer.info/doc.php?lang=en"
+    class="inline-block text-blue-600 hover:text-blue-800 font-bold
+                               border border-blue-400 rounded-md px-2 py-1
+                               transition duration-200 ease-in-out hover:border-blue-600"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        7Timer!
+                    </a></p></h4></center>
 
 <!--European Cities-->
 
@@ -147,48 +154,86 @@
         // === Helper Functions ===
         
       // Function to get weather icon path and readable text based on 7Timer! condition string
-function getWeatherIconSvg(condition) {
-    
-    // Convert condition to lowercase for robust matching
-        switch (condition.toLowerCase()) {
-                case 'clear':
-                case 'clearday': // Sometimes 7timer gives clearday/clearnight
-                case 'clearnight':
-                    return `<img src="images/clear.png">`;
-                case 'pcloudy':
-                    return `<img src="images/pcloudy.png">`;
-                case 'cloudy':
-                    return `<img src="images/cloudy.png">`;
-                case 'lightrain':
-                    return `<img src="images/lightrain.png">`;
-                case 'rain':
-                    return `<img src="images/rain.png">`;
-                case 'Isolated shower': // Isolated shower
-                    return `<img src="images/ishower.png">`;
-                case 'ts': // Thunderstorm
-                    return `<img src="images/tstorm.png">`;
-                case 'tsrain': // Thunderstorm with rain
-                    return `<img src="images/tsrain.png">`;
-                case 'hail':
-                    return `<img src="images/tsrain.png">`;
-                case 'lightsnow':
-                    return `<img src="images/lightsnow.png">`;
-                case 'snow':
-                    return `<img src="images/snow.png">`;
-                case 'rainsnow':
-                    return `<img src="images/rainsnow.png">`; // Snowflake/snow icon
-                case 'ishower':
-                    return `<img src="images/ishower.png">`;
-                case 'mcloudy':
-                    return `<img src="images/mcloudy.png">`;   
-                default:
-                    // Default general weather icon (e.g., placeholder or general weather)
-                    return `<svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                                <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.69a1.5 1.5 0 0 0-2.12 0L12 16.06l-2.19-2.19a1.5 1.5 0 0 0-2.12 0L3 16.06ZM15.75 9.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
-                            </svg>`;
-    } 
-    
+ // Function to get weather icon path and readable text based on 7Timer! condition string
+// This function now returns an object containing both the imagePath and the readableCondition string.
+function getWeatherIconAndText(condition) {
+    let imagePath = '';
+    let readableCondition = '';
 
+    // Convert condition to lowercase for robust matching from the API
+    switch (condition.toLowerCase()) {
+        case 'clear':
+        case 'clearday': // Sometimes 7timer gives clearday/clearnight
+        case 'clearnight':
+            imagePath = 'images/clear.png';
+            readableCondition = 'Clear';
+            break; // Ensures the switch exits after a match
+        case 'pcloudy':
+            imagePath = 'images/pcloudy.png';
+            readableCondition = 'Partly Cloudy'; // Sets the readable text for 'pcloudy'
+            break;
+        case 'cloudy':
+            imagePath = 'images/cloudy.png';
+            readableCondition = 'Cloudy';
+            break;
+        case 'lightrain':
+            imagePath = 'images/lightrain.png';
+            readableCondition = 'Light Rain';
+            break;
+        case 'rain':
+            imagePath = 'images/rain.png';
+            readableCondition = 'Rain';
+            break;
+        case 'isolated shower': // This might be a literal string from the API
+        case 'ishower': // Common 7Timer! abbreviation for isolated shower
+            imagePath = 'images/ishower.png';
+            readableCondition = 'Isolated Shower';
+            break;
+        case 'ts': // Thunderstorm
+            imagePath = 'images/tstorm.png';
+            readableCondition = 'Thunderstorm';
+            break;
+        case 'tsrain': // Thunderstorm with rain
+        case 'hail': // Hail often comes with thunderstorms, using same icon
+            imagePath = 'images/tsrain.png';
+            readableCondition = 'Thunderstorm with Rain';
+            break;
+        case 'lightsnow':
+            imagePath = 'images/lightsnow.png';
+            readableCondition = 'Light Snow';
+            break;
+        case 'snow':
+            imagePath = 'images/snow.png';
+            readableCondition = 'Snow';
+            break;
+        case 'rainsnow':
+            imagePath = 'images/rainsnow.png';
+            readableCondition = 'Rain Snow';
+            break;
+        case 'oshower': // Added 'oshower' mapping
+            imagePath = 'images/oshower.png'; // Make sure you have this image
+            readableCondition = 'Occasional Showers';
+            break;
+        case 'mcloudy':
+            imagePath = 'images/mcloudy.png';
+            readableCondition = 'Mostly Cloudy'; // Proper spelling for 'mcloudy'
+            break;
+        case 'fog':
+            imagePath = 'images/fog.png';
+            readableCondition = 'Foggy'; // Proper spelling for 'mcloudy'
+            break;
+        case 'humid':
+            imagePath = 'images/humid.png';
+            readableCondition = 'Humid'; // Proper spelling for 'mcloudy'
+            break;
+        case 'windy':
+            imagePath = 'images/windy.png';
+            readableCondition = 'Windy'; // Proper spelling for 'mcloudy'
+            break;
+        
+    }
+    // Return an object containing both the image path and the readable text
+    return { imagePath, readableCondition };
 }
 
         // Function to display messages (errors, warnings)
@@ -282,17 +327,21 @@ function getWeatherIconSvg(condition) {
                 const lowTemp = dayData.temp2m.min;   // 7Timer! provides Celsius directly
                 const conditionText = dayData.weather; // e.g., "Clear", "Partly Cloudy", "Rain"
 
+                const { imagePath, readableCondition } = getWeatherIconAndText(conditionText);
+
                 const cardHtml = `
-                    <div class="bg-white/20 backdrop-blur-sm p-4 rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105 hover:bg-white/30 border-2 border-transparent hover:border-white">
-                        <h3 class="text-xl font-bold mb-2">${dayOfWeek}</h3>
-                        <p class="text-sm text-gray-100 mb-4">${monthDay}</p>
-                        <div class="mb-4">
-                            ${getWeatherIconSvg(conditionText)}
-                        </div>
-                        <p class="text-lg font-semibold capitalize">${conditionText.replace(/([A-Z])/g, ' $1').trim()}</p>
-                        <p class="text-4xl font-extrabold my-2">${highTemp}°C</p>
-                        <p class="text-base text-gray-200">Low: ${lowTemp}°C</p>
-                    </div>
+                <div class="bg-white/20 backdrop-blur-sm p-4 rounded-xl shadow-lg flex flex-col items-center transform transition duration-300 hover:scale-105 hover:bg-white/30 border-2 border-transparent hover:border-white">
+                <h3 class="text-xl font-bold mb-2">${dayOfWeek}</h3>
+                <p class="text-sm text-gray-100 mb-4">${monthDay}</p>
+                <div class="mb-4">
+                    <!-- Use the imagePath for the src attribute -->
+                    <img src="${imagePath}" alt="${readableCondition}">
+                </div>
+                <!-- Use the readableCondition for displaying the text -->
+                <center><p class="text-lg font-semibold capitalize">${readableCondition}</p></center>
+                <p class="text-4xl font-extrabold my-2">${highTemp}°C</p>
+                <p class="text-base text-gray-200">Low: ${lowTemp}°C</p>
+            </div>
                 `;
                 forecastGrid.insertAdjacentHTML('beforeend', cardHtml);
             });
