@@ -270,13 +270,16 @@ function getWeatherIconAndText(condition) {
 
         // === Core Logic ===
 
-       // Function to fetch weather data from 7Timer! API
+     // Function to fetch weather data from 7Timer! API via a reliable CORS proxy
 async function fetchWeather(cityLat, cityLon, cityName) {
     showLoading(); // Show loading spinner
     currentCityNameDisplay.textContent = `Loading Forecast for ${cityName}...`; // Update city name display
 
-    // Build API URL directly to 7Timer via HTTPS
-    const apiUrl = `https://www.7timer.info/bin/api.pl?product=civillight&output=json&lon=${cityLon}&lat=${cityLat}`;
+    // Build raw 7Timer URL
+    const rawTargetUrl = `http://www.7timer.info/bin/api.pl?product=civillight&output=json&lon=${cityLon}&lat=${cityLat}`;
+
+    // Wrap in AllOrigins CORS proxy to bypass cross-origin browser blocks
+    const apiUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rawTargetUrl)}`;
 
     try {
         const response = await fetch(apiUrl);
