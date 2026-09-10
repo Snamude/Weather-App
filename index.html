@@ -270,35 +270,56 @@ function getWeatherIconAndText(condition) {
 
         // === Core Logic ===
 
-        // Function to fetch weather data from 7Timer! API
-        async function fetchWeather(cityLat, cityLon, cityName) {
-            showLoading(); // Show loading spinner
-            currentCityNameDisplay.textContent = `Loading Forecast for ${cityName}...`; // Update city name display
- 
-            // 1. Build the complete raw 7Timer target URL with coordinates first
-            const rawTargetUrl = `${SEVEN_TIMER_API_URL}&lon=${cityLon}&lat=${cityLat}`;
+       // Function to fetch weather data (Switched to Open-Meteo to bypass 7Timer outage)
+async function fetchWeather(cityLat, cityLon, cityName) {
+    showLoading();
+    currentCityNameDisplay.textContent = `Loading Forecast for ${cityName}...`;
 
-            // 2. Wrap the entire URL safely inside the CORS proxy so no parameters are lost
-            const apiUrl = `https://corsproxy.io/?url=${encodeURIComponent(rawTargetUrl)}`; 
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
-                }
-                const data = await response.json();
-                renderForecast(cityName, data.dataseries);
-            } catch (error) {
-                console.error("Error fetching weather data:", error);
-                // --- MODIFICATION START ---
-                // More specific error message for network issues
-                showMessage(`Failed to load weather for ${cityName}. This might be due to a network issue or the 7Timer! API being temporarily unavailable. Please try again later.`, true);
-                // --- MODIFICATION END ---
-                currentCityNameDisplay.textContent = `Forecast for ${cityName} (Error)`; 
-                forecastGrid.innerHTML = ''; // Clear forecast cards on error
-            } finally {
-                hideLoading(); // Hide loading spinner regardless of success or failure
-            }
+    // Open-Meteo API endpoint (Free, high-uptime, no API key required)
+    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${cityLat}&longitude=${cityLon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
+        const data = await response.json();
+        
+        // Map Open-Meteo daily data to fit your existing renderForecast function
+        const dataseries = data.daily.time.map((dateStr, i) => {
+            const formattedDate = dateStr.replace(/-/g, ''); // Convert YYYY-MM-DD to YYYYMMDD
+            const code = data.daily.weathercode[i];
+            
+            // Map WMO weather codes to 7Timer weather condition keywords
+            let weatherCondition = 'clear';
+            if (code >= 1 && code <= 3) weatherCondition = 'pcloudy';
+            else if (code >= 45 && code <= 48) weatherCondition = 'fog';
+            else if (code >= 51 && code <= 67) weatherCondition = 'lightrain';
+            else if (code >= 71 && code <= 77) weatherCondition = 'snow';
+            else if (code >= 80 && code <= 82) weatherCondition = 'ishower';
+            else if (code >= 95) weatherCondition = 'ts';
+
+            return {
+                date: formattedDate,
+                temp2m: {
+                    max: Math.round(data.daily.temperature_2m_max[i]),
+                    min: Math.round(data.daily.temperature_2m_min[i])
+                },
+                weather: weatherCondition
+            };
+        });
+
+        renderForecast(cityName, dataseries);
+    } catch (error) {
+        console.error("Error fetching weather data:", error);
+        showMessage(`Failed to load weather for ${cityName}. Please try again later.`, true);
+        currentCityNameDisplay.textContent = `Forecast for ${cityName} (Error)`; 
+        forecastGrid.innerHTML = '';
+    } finally {
+        hideLoading();
+    }
+}
 
         // Function to render the forecast cards on the grid
         function renderForecast(cityName, dailyForecasts) {
