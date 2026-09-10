@@ -12,7 +12,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <!-- CSS Stylesheets -->
 <link rel="stylesheet" href="css/master.css"> 
-<title>EurOrbit Weather Forecast (7Timer!)</title>
+<title>EurOrbit Weather Forecast</title>
 </head>
 
 <body>    
@@ -80,13 +80,9 @@
         </div>
     </div>
 
-    <script>
+    <script> 
         // === Configuration ===
-        // 7Timer! API endpoint for civillight daily forecast (no API key needed for this product)
-        // Changed to HTTPS to prevent mixed content errors
-        //const SEVEN_TIMER_API_URL = 'https://www.7timer.info/bin/api.pl?product=civillight&output=json';
-        //const SEVEN_TIMER_API_URL = 'https://corsproxy.io/?url=http://www.7timer.info/bin/api.pl?product=civillight&output=json';
-        const SEVEN_TIMER_API_URL = 'https://www.7timer.info/bin/api.pl?product=civillight&output=json';        
+         const SEVEN_TIMER_API_URL = 'https://www.7timer.info/bin/api.pl?product=civillight&output=json';        
         
         // European cities with their coordinates
         const EUROPEAN_CITIES = {
@@ -158,7 +154,7 @@
         // === Helper Functions ===
           
         
-    // Function to get weather icon path and readable text based on 7Timer! condition string
+    
     // This function now returns an object containing both the imagePath and the readableCondition string.
 function getWeatherIconAndText(condition) {
     let imagePath = '';
@@ -188,7 +184,7 @@ function getWeatherIconAndText(condition) {
             readableCondition = 'Rain';
             break;
         case 'isolated shower': 
-        case 'ishower': // Common 7Timer! abbreviation for isolated shower
+        case 'ishower': // abbreviation for isolated shower
             imagePath = 'images/ishower.png';
             readableCondition = 'Isolated Shower';
             break;
@@ -333,11 +329,11 @@ async function fetchWeather(cityLat, cityLon, cityName) {
                 return;
             }
 
-            // Take the first 7 days from the dataseries (7Timer! provides more, but we only need 7)
+            // Take the first 7 days from the dataseries
             const sevenDayForecast = dailyForecasts.slice(0, 7);
 
             sevenDayForecast.forEach((dayData, index) => {
-                // 7Timer! `date` is YYYYMMDD format. Convert to a Date object.
+                // `date` is YYYYMMDD format. Convert to a Date object.
                 const year = String(dayData.date).substring(0, 4);
                 const month = String(dayData.date).substring(4, 6);
                 const day = String(dayData.date).substring(6, 8);
@@ -349,8 +345,8 @@ async function fetchWeather(cityLat, cityLon, cityName) {
                 const dayOfWeek = (forecastDateFormatted === todayFormatted) ? 'Today' : forecastDate.toLocaleDateString('en-US', { weekday: 'short' });
                 const monthDay = forecastDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-                const highTemp = dayData.temp2m.max; // 7Timer! provides Celsius directly
-                const lowTemp = dayData.temp2m.min;   // 7Timer! provides Celsius directly
+                const highTemp = dayData.temp2m.max; 
+                const lowTemp = dayData.temp2m.min;   
                 const conditionText = dayData.weather; // e.g., "Clear", "Partly Cloudy", "Rain"
 
                 const { imagePath, readableCondition } = getWeatherIconAndText(conditionText);
