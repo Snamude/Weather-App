@@ -270,38 +270,30 @@ function getWeatherIconAndText(condition) {
 
         // === Core Logic ===
 
-        // Function to fetch weather data from 7Timer! API
-        async function fetchWeather(cityLat, cityLon, cityName) {
-            showLoading(); // Show loading spinner
-            currentCityNameDisplay.textContent = `Loading Forecast for ${cityName}...`; // Update city name display
+       // Function to fetch weather data from 7Timer! API
+async function fetchWeather(cityLat, cityLon, cityName) {
+    showLoading(); // Show loading spinner
+    currentCityNameDisplay.textContent = `Loading Forecast for ${cityName}...`; // Update city name display
 
-            // Build API URL for 7Timer! civillight product
-            //const apiUrl = `${SEVEN_TIMER_API_URL}&lon=${cityLon}&lat=${cityLat}`;
-            // 1. Build the complete raw 7Timer target URL with coordinates first
-            const rawTargetUrl = `${SEVEN_TIMER_API_URL}&lon=${cityLon}&lat=${cityLat}`;
+    // Build API URL directly to 7Timer via HTTPS
+    const apiUrl = `https://www.7timer.info/bin/api.pl?product=civillight&output=json&lon=${cityLon}&lat=${cityLat}`;
 
-            // 2. Wrap the entire URL safely inside the CORS proxy so no parameters are lost
-            const apiUrl = `https://corsproxy.io/?url=${encodeURIComponent(rawTargetUrl)}`;
-
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
-                }
-                const data = await response.json();
-                renderForecast(cityName, data.dataseries);
-            } catch (error) {
-                console.error("Error fetching weather data:", error);
-                // --- MODIFICATION START ---
-                // More specific error message for network issues
-                showMessage(`Failed to load weather for ${cityName}. This might be due to a network issue or the 7Timer! API being temporarily unavailable. Please try again later.`, true);
-                // --- MODIFICATION END ---
-                currentCityNameDisplay.textContent = `Forecast for ${cityName} (Error)`; 
-                forecastGrid.innerHTML = ''; // Clear forecast cards on error
-            } finally {
-                hideLoading(); // Hide loading spinner regardless of success or failure
-            }
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
         }
+        const data = await response.json();
+        renderForecast(cityName, data.dataseries);
+    } catch (error) {
+        console.error("Error fetching weather data:", error);
+        showMessage(`Failed to load weather for ${cityName}. This might be due to a network issue or the 7Timer! API being temporarily unavailable. Please try again later.`, true);
+        currentCityNameDisplay.textContent = `Forecast for ${cityName} (Error)`; 
+        forecastGrid.innerHTML = ''; // Clear forecast cards on error
+    } finally {
+        hideLoading(); // Hide loading spinner regardless of success or failure
+    }
+}
 
         // Function to render the forecast cards on the grid
         function renderForecast(cityName, dailyForecasts) {
